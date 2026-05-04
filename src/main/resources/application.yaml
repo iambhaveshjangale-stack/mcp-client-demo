@@ -65,7 +65,7 @@ app:
         provider: ai-gemini
       ai:
         gemini:
-          api-key: AIzaSyDS0QuaCKY-vPNYYciuG4S-WsyBcIU7vxE
+          api-key: ##############################use API Key
           chat-model:
             model-name: gemini-2.0-flash
   app:
