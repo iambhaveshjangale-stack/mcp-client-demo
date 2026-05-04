@@ -1,0 +1,73 @@
+quarkus:
+  http:
+    port: 8080
+  profile: gemini
+  langchain4j:
+    timeout: 1200s
+    mcp:
+      patient-http:
+        transport-type: http
+        url: "http://localhost:8081/sse"
+        tool-execution-timeout: 6000s
+        resources-timeout: 1200s
+        ping-timeout: 300s
+  log:
+    level: INFO
+    category:
+      "com.mcp.demo":
+        level: DEBUG
+      "com.mcp.demo.guidance":
+        level: INFO
+      "dev.langchain4j":
+        level: DEBUG
+      "io.quarkiverse.langchain4j":
+        level: DEBUG
+
+app:
+  chat:
+    system-prompt: >-
+      You are a helpful assistant. Use MCP tools only when the user clearly asks for patient or medical data or actions only those tools can provide. For greetings, small talk, or unrelated questions, answer directly and do not call tools.
+    mcp-tools:
+      mode: AUTO
+      auto-trigger-pattern: "(?i)(patient|patients|find\\s+patient|medical\\s+history|john\\s+doe|list\\s+all\\s+patients|show\\s+.*history|date\\s+of\\s+birth|registration)"
+    agent-guidance:
+      enabled: true
+      base-path: classpath:guidance/
+      mappings:
+        - tool-pattern: "(?i)(register|onboard|registration|sign\\s*up|Patient_Registration)"
+          skills-file: bmad-mcp-onboarding/SKILL.md
+          rules-file: bmad-mcp-onboarding/RULE.md
+        - tool-pattern: "(?i)(fetch|get_|find_|list_|search|retrieve)"
+          skills-file: bmad-mcp-data-fetch/SKILL.md
+          rules-file: bmad-mcp-data-fetch/RULE.md
+        - tool-pattern: "(?i)patient"
+          skills-file: bmad-mcp-patient-context/SKILL.md
+          rules-file: bmad-mcp-patient-context/RULE.md
+
+"%ollama":
+  quarkus:
+    langchain4j:
+      chat-model:
+        provider: ollama
+      ollama:
+        base-url: "http://localhost:11434"
+        timeout: 1200s
+        chat-model:
+          model-name: "llama3.1:latest"
+  app:
+    llm:
+      provider: ollama
+
+"%gemini":
+  quarkus:
+    langchain4j:
+      chat-model:
+        provider: ai-gemini
+      ai:
+        gemini:
+          api-key: AIzaSyDS0QuaCKY-vPNYYciuG4S-WsyBcIU7vxE
+          chat-model:
+            model-name: gemini-2.0-flash
+  app:
+    llm:
+      provider: gemini

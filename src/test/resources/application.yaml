@@ -1,0 +1,13 @@
+quarkus:
+  langchain4j:
+    mcp:
+      enabled: false
+    chat-model:
+      provider: ollama
+    ollama:
+      chat-model:
+        enabled: false
+  log:
+    category:
+      "com.mcp.demo":
+        level: INFO
